@@ -1,0 +1,359 @@
+#include <IRremote.h>
+#include <SoftwareSerial.h>
+SoftwareSerial bluetoothModulu(0,1);
+int RECV_PIN=4;
+int hizpin=5;
+int hizpin1=6;
+int led= 3; 
+int led2= 9;
+#define buton1 530
+#define buton2 531
+#define buton3 534
+#define buton4 533
+#define buton5 532
+#define buton10 2580
+#define buton11 2578
+#define buton12 2581
+#define buton13 2582
+#define buton14 2579
+#define buton15 544   //2.vites ileri
+#define buton16 2592  //2.vites ileri dur
+#define buton17 545   //2.vites geri
+#define buton18 2593  //2.vites geri dur
+#define buton19 529   //2.vites sol 
+#define buton20 2577  //2.vites sol dur
+#define buton21 528   //2.vites sağ 
+#define buton22 2576  //2.vites sağ dur
+const int trigger_pin1 =7;
+const int echo_pin1 =8;
+int sure1;
+int mesafe1;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+void setup() {
+ irrecv.enableIRIn();
+ pinMode(trigger_pin1, OUTPUT);
+  pinMode(echo_pin1, INPUT);
+Serial.begin(9600);
+pinMode(hizpin, OUTPUT);
+pinMode(hizpin1, OUTPUT);
+pinMode(led,OUTPUT);
+pinMode(led2,OUTPUT);
+pinMode(13,OUTPUT);
+pinMode(12,OUTPUT);
+pinMode(11,OUTPUT);
+pinMode(10,OUTPUT);
+pinMode(3,OUTPUT);
+digitalWrite(13,LOW);
+digitalWrite(12,LOW);
+digitalWrite(11,LOW);
+digitalWrite(3,HIGH);
+digitalWrite(10,LOW);
+}
+void loop() {
+ digitalWrite(trigger_pin1, HIGH);       //1.HC-SR04  
+  delayMicroseconds(1000);
+  digitalWrite(trigger_pin1, LOW);
+  sure1 = pulseIn(echo_pin1, HIGH);
+  mesafe1 = (sure1 / 2) / 28.5;
+   if (irrecv.decode(&results)) {
+Serial.println(results.value);
+unsigned int value=results.value;
+switch(value){
+case buton1: //ileri
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+  digitalWrite(led,LOW);
+digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break;
+case buton11: //DUR
+digitalWrite(3,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ break;
+ case buton15: //2.vites ileri
+ analogWrite(hizpin,230);
+ analogWrite(hizpin1,230);
+  digitalWrite(led,LOW);
+digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+ break;
+ case buton16: //2.vites ileri dur
+ digitalWrite(led,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ break;
+ case buton2: //geri
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+ digitalWrite(led2,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+ break;
+ case buton14: //DUR
+ digitalWrite(led2,LOW);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ break;
+ case buton17: //2.vites geri 
+ analogWrite(hizpin,230);
+ analogWrite(hizpin1,230);
+  digitalWrite(led2,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+ break;
+ case buton18: //2.vites geri dur 
+ digitalWrite(led2,LOW);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ break;
+ case buton3: //sağ
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+  digitalWrite(led,LOW);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break;
+ case buton13: //DUR
+ digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+break;
+case buton21: //2.vites sağ
+ analogWrite(hizpin,230);
+ analogWrite(hizpin1,230);
+  digitalWrite(led,LOW);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+ break;
+ case buton22: //2.vites sağ dur
+ digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ break;
+ case buton4: //sol
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+ digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+  case buton12: //DUR
+ digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ break;
+ case buton19: //2.vite sol  
+ analogWrite(hizpin,230);
+ analogWrite(hizpin1,230);
+ digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+ break;
+ case buton20: //2.vites sol DUR
+ digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+}
+
+ irrecv.resume();
+}
+
+if(mesafe1 <= 15)
+  {
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+ digitalWrite(led,HIGH);
+ digitalWrite(led2,LOW);
+ digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+ delay(35);
+ digitalWrite(10,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+ }
+  telefon();
+ }
+void telefon() {
+ char ch = Serial.read();
+ if(ch > 0)
+ {
+ switch (ch)
+ {
+ case 'a':         //ileri
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+  digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break;
+case 'd':            //dur
+ digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+break; 
+case 'm':         //     2. VİTES ileri
+ analogWrite(hizpin,180);
+ analogWrite(hizpin1,180);
+  digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break; 
+case 'y':         //     3. VİTES ileri
+ analogWrite(hizpin,220);
+ analogWrite(hizpin1,220);
+  digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break; 
+case 'x':             //geri
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+ digitalWrite(led2,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+case 't':             //2.VİTES geri
+ analogWrite(hizpin,180);
+ analogWrite(hizpin1,180);
+ digitalWrite(led2,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+case 'u':             //3.VİTES geri
+ analogWrite(hizpin,220);
+ analogWrite(hizpin1,220);
+ digitalWrite(led2,HIGH);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+case 'e':              //dur
+ digitalWrite(led2,LOW);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+break;
+case 's':             //sağ
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+  digitalWrite(led,LOW);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break;
+case 'v':             //2.VİTES sağ
+ analogWrite(hizpin,180);
+ analogWrite(hizpin1,180);
+  digitalWrite(led,LOW);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break;
+case 'o':             //3.VİTES sağ
+ analogWrite(hizpin,180);
+ analogWrite(hizpin1,180);
+  digitalWrite(led,LOW);
+digitalWrite(13,LOW);
+ digitalWrite(12,HIGH);
+ digitalWrite(11,HIGH);
+ digitalWrite(10,LOW);
+break;
+case 'c':              //dur
+digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+break;
+case 'z':             //sol
+ analogWrite(hizpin,150);
+ analogWrite(hizpin1,150);
+ digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+case 'q':             //2.VİTES sol
+ analogWrite(hizpin,180);
+ analogWrite(hizpin1,180);
+ digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+case 'p':             //3.VİTES sol
+ analogWrite(hizpin,180);
+ analogWrite(hizpin1,180);
+ digitalWrite(led,LOW);
+ digitalWrite(13,HIGH);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,HIGH);
+break;
+case 'r':              //dur
+ digitalWrite(led,HIGH);
+ digitalWrite(13,LOW);
+ digitalWrite(12,LOW);
+ digitalWrite(11,LOW);
+ digitalWrite(10,LOW);
+}}}
